@@ -1,8 +1,7 @@
-import { useState } from 'react';
 import Carousel from '../components/ui/carousel';
-import './App.css';
 
-function App() {
+
+function Home () {
   const slides = [
     {
       title: "1984 - George Orwell",
@@ -28,4 +27,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home ;
