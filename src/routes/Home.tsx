@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Carousel from './components/ui/carousel';
+import Carousel from '../components/ui/carousel';
 import './App.css';
 
 function App() {
