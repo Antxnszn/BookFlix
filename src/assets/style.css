@@ -14,7 +14,14 @@ html, body {
     display: flex;
     justify-content: space-between; /* separa los elementos */
     align-items: center; /* alínea verticalmente */
-    padding: 1rem;
+    padding: .5rem;
+}
+
+@media (max-width: 768px) { /* si el ancho de la pantalla es menor a 768px (para celulares)*/
+    .contenedor {
+        flex-direction: column;
+        align-items: center;
+    }
 }
 
 .nav {
