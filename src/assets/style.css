@@ -63,3 +63,23 @@ html, body {
     display: block;
     width: fit-content;
 }
+
+/* boton recargar */
+
+.buttonload {
+    background-color: #333;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 30%;
+    transition: 0.3s;
+}
+
+.buttonload:hover {
+    cursor: pointer;
+    background-color: #666;
+}
+
+.buttonload img {
+    width: 2rem;
+    height: 2rem;
+}
