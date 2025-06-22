@@ -1,25 +1,10 @@
-import { useState } from 'react';
+import '../styles/style.css';
 
 export default function MyApp() {
   return (
-    <div>
-      <h1>Counters that update separately</h1>
-      <MyButton />
-      <MyButton />
+    <div className="bg-[#151a24] contenedor-1">
+      <h1 className='text-2xl font-bold text-white'>Top Matches</h1>
+      <p className='italic'>Calculamos tus preferencias según la información proporcionada en tu perfil</p>
     </div>
-  );
-}
-
-function MyButton() {
-  const [count, setCount] = useState(0);
-
-  function handleClick() {
-    setCount(count + 1);
-  }
-
-  return (
-    <button onClick={handleClick}>
-      Clicked {count} times
-    </button>
   );
 }

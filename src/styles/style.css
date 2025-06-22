@@ -11,10 +11,26 @@ html, body {
 }
 
 .contenedor {
-    display: flex;
+    display: flex; /* muestra los elementos en una fila */
     justify-content: space-between; /* separa los elementos */
     align-items: center; /* alínea verticalmente */
     padding: 1rem;
+}
+
+@media (max-width: 768px) { /* si el ancho de la pantalla es menor a 768px (para celulares)*/
+    .contenedor, .contenedor-1{
+        flex-direction: column;
+        display: block; /* muestra los elementos en una columna */
+        align-items: center;
+    }
+}
+
+.contenedor-1 {
+    padding: 4rem 2rem; /* top-bottom, left-right */
+}
+
+.contenedor-1 p {
+    margin-top: 1rem;
 }
 
 .nav {
