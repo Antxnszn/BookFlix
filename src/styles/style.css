@@ -27,10 +27,11 @@ html, body {
 
 .contenedor-1 {
     padding: 4rem 2rem; /* top-bottom, left-right */
+    background-color: #151a24;
 }
 
 .contenedor-1 p {
-    margin-top: 1rem;
+    margin-top: 2rem;
 }
 
 .nav {
