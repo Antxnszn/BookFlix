@@ -1,212 +1,268 @@
-"use client";
-import { IconArrowNarrowRight } from "@tabler/icons-react";
-import { useState, useRef, useId, useEffect } from "react";
+import React, { useState, useRef } from 'react';
+import { ChevronLeft, ChevronRight, Star, Clock, BookOpen } from 'lucide-react';
 
-interface SlideData {
+interface Book {
+  id: number;
   title: string;
-  button: string;
-  src: string;
+  author: string;
+  cover: string;
+  // rating: number;
+  genre: string;
+  description: string;
 }
 
-interface SlideProps {
-  slide: SlideData;
-  index: number;
-  current: number;
-  handleSlideClick: (index: number) => void;
+interface BookCarouselProps {
+  title: string;
+  books: Book[];
 }
 
-const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
-  const slideRef = useRef<HTMLLIElement>(null);
+const BookCarousel: React.FC<BookCarouselProps> = ({ title, books }) => {
+  const [hoveredBook, setHoveredBook] = useState<number | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const xRef = useRef(0);
-  const yRef = useRef(0);
-  const frameRef = useRef<number>();
-
-  useEffect(() => {
-    const animate = () => {
-      if (!slideRef.current) return;
-
-      const x = xRef.current;
-      const y = yRef.current;
-
-      slideRef.current.style.setProperty("--x", `${x}px`);
-      slideRef.current.style.setProperty("--y", `${y}px`);
-
-      frameRef.current = requestAnimationFrame(animate);
-    };
-
-    frameRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (frameRef.current) {
-        cancelAnimationFrame(frameRef.current);
-      }
-    };
-  }, []);
-
-  const handleMouseMove = (event: React.MouseEvent) => {
-    const el = slideRef.current;
-    if (!el) return;
-
-    const r = el.getBoundingClientRect();
-    xRef.current = event.clientX - (r.left + Math.floor(r.width / 2));
-    yRef.current = event.clientY - (r.top + Math.floor(r.height / 2));
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const scrollAmount = 320; // Ancho de cada libro + gap
+      const currentScroll = scrollRef.current.scrollLeft;
+      const targetScroll = direction === 'left' 
+        ? currentScroll - scrollAmount 
+        : currentScroll + scrollAmount;
+      
+      scrollRef.current.scrollTo({
+        left: targetScroll,
+        behavior: 'smooth'
+      });
+    }
   };
-
-  const handleMouseLeave = () => {
-    xRef.current = 0;
-    yRef.current = 0;
-  };
-
-  const imageLoaded = (event: React.SyntheticEvent<HTMLImageElement>) => {
-    event.currentTarget.style.opacity = "1";
-  };
-
-  const { src, button, title } = slide;
 
   return (
-    <div className="[perspective:1200px] [transform-style:preserve-3d]">
-      <li
-        ref={slideRef}
-        className="flex flex-1 flex-col items-center justify-center relative text-center text-white opacity-100 transition-all duration-300 ease-in-out w-[70vmin] h-[70vmin] mx-[4vmin] z-10 "
-        onClick={() => handleSlideClick(index)}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          transform:
-            current !== index
-              ? "scale(0.98) rotateX(8deg)"
-              : "scale(1) rotateX(0deg)",
-          transition: "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-          transformOrigin: "bottom",
-        }}
-      >
-        <div
-          className="absolute top-0 left-0 w-full h-full bg-[#1D1F2F] rounded-[1%] overflow-hidden transition-all duration-150 ease-out"
-          style={{
-            transform:
-              current === index
-                ? "translate3d(calc(var(--x) / 30), calc(var(--y) / 30), 0)"
-                : "none",
-          }}
-        >
-          <img
-            className="absolute inset-0 w-[120%] h-[120%] object-cover opacity-100 transition-opacity duration-600 ease-in-out"
-            style={{
-              opacity: current === index ? 1 : 0.5,
-            }}
-            alt={title}
-            src={src}
-            onLoad={imageLoaded}
-            loading="eager"
-            decoding="sync"
-          />
-          {current === index && (
-            <div className="absolute inset-0 bg-black/30 transition-all duration-1000" />
-          )}
-        </div>
+    <div className="relative mb-12 group">
+      {/* Título de la sección */}
+      <h2 className="text-2xl font-bold text-white mb-6 px-4 md:px-12">
+        {title}
+      </h2>
 
-        <article
-          className={`relative p-[4vmin] transition-opacity duration-1000 ease-in-out ${
-            current === index ? "opacity-100 visible" : "opacity-0 invisible"
-          }`}
+      {/* Contenedor del carrusel */}
+      <div className="relative px-4 md:px-12">
+        {/* Botón izquierdo */}
+        <button
+          onClick={() => scroll('left')}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-4 md:ml-12"
+          aria-label="Scroll left"
         >
-          <h2 className="text-lg md:text-2xl lg:text-4xl font-semibold  relative">
-            {title}
-          </h2>
-          <div className="flex justify-center">
-            <button className="mt-6  px-4 py-2 w-fit mx-auto sm:text-sm text-black bg-white h-12 border border-transparent text-xs flex justify-center items-center rounded-2xl hover:shadow-lg transition duration-200 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
-              {button}
-            </button>
-          </div>
-        </article>
-      </li>
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+
+        {/* Botón derecho */}
+        <button
+          onClick={() => scroll('right')}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 mr-4 md:mr-12"
+          aria-label="Scroll right"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+
+        {/* Contenedor de libros con scroll */}
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {books.map((book) => (
+            <div
+              key={book.id}
+              className="relative flex-shrink-0 w-72"
+              onMouseEnter={() => setHoveredBook(book.id)}
+              onMouseLeave={() => setHoveredBook(null)}
+            >
+              {/* Tarjeta del libro */}
+              <div className={`
+                relative bg-gray-900 rounded-lg overflow-hidden cursor-pointer
+                transition-all duration-300 ease-out
+                ${hoveredBook === book.id 
+                  ? 'scale-105 shadow-2xl shadow-black/50 z-20' 
+                  : 'hover:scale-102'
+                }
+              `}>
+                {/* Imagen de portada */}
+                <div className="relative aspect-[3/4] overflow-hidden">
+                  <img
+                    src={book.cover}
+                    alt={book.title}
+                    className="w-full h-full object-cover transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                </div>
+
+                {/* Información básica siempre visible */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                  <h3 className="font-bold text-lg mb-1 line-clamp-2">
+                    {book.title}
+                  </h3>
+                  <p className="text-gray-300 text-sm">
+                    {book.author}
+                  </p>
+                </div>
+
+                {/* Información expandida en hover */}
+                {hoveredBook === book.id && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex flex-col justify-end">
+                    <div className="space-y-3">
+                      <div>
+                        <h3 className="font-bold text-xl mb-2 text-white">
+                          {book.title}
+                        </h3>
+                        <p className="text-gray-300 text-sm mb-2">
+                          por {book.author}
+                        </p>
+                      </div>
+
+                      {/* Rating y metadatos */}
+                      <div className="flex items-center gap-4 text-sm">
+                        <div className="flex items-center gap-1">
+                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                          <span className="text-white font-medium">
+                            {book.rating}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1 text-gray-300">
+                          <Clock className="w-4 h-4" />
+                          <span>{book.readTime}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-gray-300">
+                          <BookOpen className="w-4 h-4" />
+                          <span>{book.genre}</span>
+                        </div>
+                      </div>
+
+                      {/* Descripción */}
+                      <p className="text-gray-200 text-sm line-clamp-3 leading-relaxed">
+                        {book.description}
+                      </p>
+
+                      {/* Botones de acción */}
+                      <div className="flex gap-2 pt-2">
+                        <button className="flex-1 bg-white text-black font-semibold py-2 px-4 rounded hover:bg-gray-200 transition-colors">
+                          Leer ahora
+                        </button>
+                        <button className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded transition-colors">
+                          <BookOpen className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <style>{`
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .line-clamp-3 {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      `}</style>
     </div>
   );
 };
 
-interface CarouselControlProps {
-  type: string;
-  title: string;
-  handleClick: () => void;
-}
+// Datos de ejemplo
+const sampleBooks: Book[] = [
+  {
+    id: 1,
+    title: "El Nombre del Viento",
+    author: "Patrick Rothfuss",
+    cover: "",
+    rating: 4.8,
+    genre: "Fantasía",
+    readTime: "15h 30min",
+    description: "Una épica historia de magia, música y misterio que sigue las aventuras de Kvothe, un joven con un destino extraordinario."
+  },
+  {
+    id: 2,
+    title: "1984",
+    author: "George Orwell",
+    cover: "",
+    rating: 4.9,
+    genre: "Distopía",
+    readTime: "8h 45min",
+    description: "Una visionaria novela sobre un futuro totalitario donde la libertad de pensamiento es el último refugio de la humanidad."
+  },
+  {
+    id: 3,
+    title: "Cien Años de Soledad",
+    author: "Gabriel García Márquez",
+    cover: "",
+    rating: 4.7,
+    genre: "Realismo Mágico",
+    readTime: "12h 15min",
+    description: "La saga multigeneracional de la familia Buendía en el mítico pueblo de Macondo, una obra maestra del realismo mágico."
+  },
+  {
+    id: 4,
+    title: "El Alquimista",
+    author: "Paulo Coelho",
+    cover: "",
+    rating: 4.6,
+    genre: "Filosofía",
+    readTime: "4h 30min",
+    description: "La inspiradora historia de Santiago, un joven pastor que emprende un viaje para descubrir su leyenda personal."
+  },
+  {
+    id: 5,
+    title: "Dune",
+    author: "Frank Herbert",
+    cover: "",
+    rating: 4.5,
+    genre: "Ciencia Ficción",
+    readTime: "22h 10min",
+    description: "Una épica espacial ambientada en el desértico planeta Arrakis, donde el control de la especia determina el destino del universo."
+  },
+  {
+    id: 6,
+    title: "Orgullo y Prejuicio",
+    author: "Jane Austen",
+    cover: "",
+    rating: 4.4,
+    genre: "Romance Clásico",
+    readTime: "11h 20min",  
+    description: "Una ingeniosa comedia de modales que explora temas de amor, reputación y clase social en la Inglaterra del siglo XIX."
+  }
+];
 
-const CarouselControl = ({
-  type,
-  title,
-  handleClick,
-}: CarouselControlProps) => {
+// Componente principal de demostración
+export default function App() {
   return (
-    <button
-      className={`w-10 h-10 flex items-center mx-2 justify-center bg-neutral-200 dark:bg-neutral-800 border-3 border-transparent rounded-full focus:border-[#6D64F7] focus:outline-none hover:-translate-y-0.5 active:translate-y-0.5 transition duration-200 ${
-        type === "previous" ? "rotate-180" : ""
-      }`}
-      title={title}
-      onClick={handleClick}
-    >
-      <IconArrowNarrowRight className="text-neutral-600 dark:text-neutral-200" />
-    </button>
-  );
-};
-
-interface CarouselProps {
-  slides: SlideData[];
-}
-
-export default function Carousel({ slides }: CarouselProps) {
-  const [current, setCurrent] = useState(0);
-
-  const handlePreviousClick = () => {
-    const previous = current - 1;
-    setCurrent(previous < 0 ? slides.length - 1 : previous);
-  };
-
-  const handleNextClick = () => {
-    const next = current + 1;
-    setCurrent(next === slides.length ? 0 : next);
-  };
-
-  const handleSlideClick = (index: number) => {
-    if (current !== index) {
-      setCurrent(index);
-    }
-  };
-
-  const id = useId();
-
-  return (
-    <div
-      className="relative w-[70vmin] h-[70vmin] mx-auto"
-      aria-labelledby={`carousel-heading-${id}`}
-    >
-      <ul
-        className="absolute flex mx-[-4vmin] transition-transform duration-1000 ease-in-out"
-        style={{
-          transform: `translateX(-${current * (100 / slides.length)}%)`,
-        }}
-      >
-        {slides.map((slide, index) => (
-          <Slide
-            key={index}
-            slide={slide}
-            index={index}
-            current={current}
-            handleSlideClick={handleSlideClick}
-          />
-        ))}
-      </ul>
-
-      <div className="absolute flex justify-center w-full top-[calc(100%+1rem)]">
-        <CarouselControl
-          type="previous"
-          title="Go to previous slide"
-          handleClick={handlePreviousClick}
+    <div className="min-h-screen bg-black">
+      <div className="pt-8">
+        <BookCarousel 
+          title="Recomendados para ti" 
+          books={sampleBooks} 
         />
-
-        <CarouselControl
-          type="next"
-          title="Go to next slide"
-          handleClick={handleNextClick}
+        <BookCarousel 
+          title="Más populares" 
+          books={sampleBooks.slice().reverse()} 
+        />
+        <BookCarousel 
+          title="Nuevos lanzamientos" 
+          books={sampleBooks.slice(2)} 
         />
       </div>
     </div>
