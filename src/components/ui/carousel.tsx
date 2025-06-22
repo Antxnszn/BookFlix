@@ -38,16 +38,16 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ title, books }) => {
   return (
     <div className="relative mb-12 group">
       {/* Título de la sección */}
-      <h2 className="text-2xl font-bold text-white mb-6 px-4 md:px-12">
+      <h2 className="text-2xl font-bold text-[#FBFDFA] mb-6">
         {title}
       </h2>
 
       {/* Contenedor del carrusel */}
-      <div className="relative px-4 md:px-12">
+      <div className="relative ">
         {/* Botón izquierdo */}
         <button
           onClick={() => scroll('left')}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-4 md:ml-12"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hover:bg- text-[#FBFDFA] p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-4 md:ml-12"
           aria-label="Scroll left"
         >
           <ChevronLeft className="w-6 h-6" />
@@ -56,7 +56,7 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ title, books }) => {
         {/* Botón derecho */}
         <button
           onClick={() => scroll('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 mr-4 md:mr-12"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#FFFFFF] hover:bg-black text-[#FBFDFA] p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 mr-4 md:mr-12"
           aria-label="Scroll right"
         >
           <ChevronRight className="w-6 h-6" />
@@ -77,7 +77,7 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ title, books }) => {
             >
               {/* Tarjeta del libro */}
               <div className={`
-                relative bg-gray-900 rounded-lg overflow-hidden cursor-pointer
+                relative bg-none rounded-lg overflow-hidden cursor-pointer
                 transition-all duration-300 ease-out
                 ${hoveredBook === book.id 
                   ? 'scale-105 shadow-2xl shadow-black/50 z-20' 
@@ -95,7 +95,7 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ title, books }) => {
                 </div>
 
                 {/* Información básica siempre visible */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                <div className="absolute bottom-0 left-0 right-0 p-4 text-[#FBFDFA]">
                   <h3 className="font-bold text-lg mb-1 line-clamp-2">
                     {book.title}
                   </h3>
@@ -109,7 +109,7 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ title, books }) => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex flex-col justify-end">
                     <div className="space-y-3">
                       <div>
-                        <h3 className="font-bold text-xl mb-2 text-white">
+                        <h3 className="font-bold text-xl mb-2 text-[#FBFDFA]">
                           {book.title}
                         </h3>
                         <p className="text-gray-300 text-sm mb-2">
@@ -121,13 +121,9 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ title, books }) => {
                       <div className="flex items-center gap-4 text-sm">
                         <div className="flex items-center gap-1">
                           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-white font-medium">
+                          <span className="text-[#FBFDFA] font-medium">
                             {book.rating}
                           </span>
-                        </div>
-                        <div className="flex items-center gap-1 text-gray-300">
-                          <Clock className="w-4 h-4" />
-                          <span>{book.readTime}</span>
                         </div>
                         <div className="flex items-center gap-1 text-gray-300">
                           <BookOpen className="w-4 h-4" />
@@ -145,7 +141,7 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ title, books }) => {
                         <button className="flex-1 bg-white text-black font-semibold py-2 px-4 rounded hover:bg-gray-200 transition-colors">
                           Leer ahora
                         </button>
-                        <button className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded transition-colors">
+                        <button className="bg-gray-700 hover:bg-gray-600 text-[#FBFDFA] p-2 rounded transition-colors">
                           <BookOpen className="w-5 h-5" />
                         </button>
                       </div>
@@ -158,7 +154,7 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ title, books }) => {
         </div>
       </div>
 
-      <style>{`
+      {/* <style>{`
         .scrollbar-hide {
           -ms-overflow-style: none;
           scrollbar-width: none;
@@ -178,7 +174,7 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ title, books }) => {
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
-      `}</style>
+      `}</style> */}
     </div>
   );
 };
@@ -250,7 +246,7 @@ const sampleBooks: Book[] = [
 // Componente principal de demostración
 export default function App() {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="">
       <div className="pt-8">
         <BookCarousel 
           title="Recomendados para ti" 

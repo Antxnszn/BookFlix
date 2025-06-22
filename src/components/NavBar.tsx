@@ -4,21 +4,18 @@ import '../styles/style.css';
 function NavBar () {
     return (
     
-    <section>
-    <div className="contenedor">
-      <div>
-        <h1>Bookflix</h1>
-      </div>
-      <div>
-        <nav className="nav">
-          <a href="index.html">Home</a>
-          <a href="features.html">Features</a>
-          <a href="login.html">About</a>
-          <a href="signup.html">Contact</a>
-        </nav>
-      </div>
-    </div>
-  </section>
+    <section className="bg-white/30 backdrop-blur-3xl border border-white/30 rounded-lg shadow-lg">
+  <div className="contenedor flex justify-between items-center p-4">
+    <h1 className="text-[#2B421B] font-bold text-xl">Bookflix</h1>
+    <nav className="nav space-x-6">
+      <a href="index.html" className="text-white hover:underline">Home</a>
+      <a href="features.html" className="text-white hover:underline">Features</a>
+      <a href="login.html" className="text-white hover:underline">About</a>
+      <a href="signup.html" className="text-white hover:underline">Contact</a>
+    </nav>
+  </div>
+</section>
+
 );
 
 }

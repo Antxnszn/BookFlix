@@ -5,7 +5,7 @@ function Home () {
 
 
   return (
-    <div className="min-h-screen overflow-x-hidden flex items-center justify-center">
+    <div className="min-h-screen bg-[#F6FBF3] overflow-x-hidden flex items-center justify-center">
       <Carousel />
     </div>
   );

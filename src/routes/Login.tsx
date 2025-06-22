@@ -13,7 +13,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-900 text-white">
+    <div className="min-h-screen flex flex-col justify-center items-center text-white">
       <h1 className="text-2xl mb-6">Iniciar sesión</h1>
       <form onSubmit={handleSubmit} className="space-y-4 w-80">
         <input
