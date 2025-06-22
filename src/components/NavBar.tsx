@@ -7,7 +7,7 @@ function NavBar () {
     <section>
     <div className="contenedor">
       <div>
-        <h1>Bookflix</h1>
+        <h1 className='font-bold'>Bookflix</h1>
       </div>
       <div>
         <nav className="nav">
