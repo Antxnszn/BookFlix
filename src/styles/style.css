@@ -1,3 +1,9 @@
+:root {
+    --gris: #474647;
+    --gris-oscuro: #363536;
+    --verde: #9fd67b;
+}
+
 *{
     padding: 0;
     margin: 0 auto;
@@ -7,15 +13,26 @@
 html, body {
     background-color: #E4FAD8;
     font-family: "PT Sans", sans-serif;
+<<<<<<< HEAD:src/styles/style.css
     color: #333;
     
+=======
+    color: var(--gris);
+>>>>>>> 4294883b93d8ff6e7e84b8d5c266f029c82ddbdc:src/assets/style.css
 }
 
 .contenedor {
     display: flex;
     justify-content: space-between; /* separa los elementos */
     align-items: center; /* alínea verticalmente */
-    padding: 1rem;
+    padding: .5rem;
+}
+
+@media (max-width: 768px) { /* si el ancho de la pantalla es menor a 768px (para celulares)*/
+    .contenedor {
+        flex-direction: column;
+        align-items: center;
+    }
 }
 
 .nav {
@@ -26,7 +43,7 @@ html, body {
 }
 
 .nav a {
-    color: #333;
+    color: var(--gris);
     text-decoration: none;
     padding: 0.5rem 1rem;
     transition: background-color 0.3s, color 0.3s;
@@ -34,21 +51,34 @@ html, body {
 }
 
 .nav a:hover {
-    color: #9fd67b;
+    color: var(--verde);
 }
 
 .titulo {
+    color: var(--gris-oscuro);
     padding: 0.5rem 3rem;
     font-size: 1rem;
     font-weight: 700;
     font-style: normal;
+    text-align: center;
+    margin: 3rem auto 0.2rem auto; /* top, right, bottom, left */
+    display: block;
+    width: fit-content;
+}
+
+.subtitulo {
+    padding: 0.5rem 3rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-style: normal;
+    letter-spacing: 0.1px;
     text-align: center;
     margin: 3rem auto 1rem auto; /* top, right, bottom, left */
     display: block;
     width: fit-content;
 }
 
-.texto {
+.texto-titulo {
     font-size: 1rem;
     font-weight: 400;
     font-style: normal;
@@ -56,4 +86,24 @@ html, body {
     margin: 0 auto 3rem auto; /* top, right, bottom, left */
     display: block;
     width: fit-content;
+}
+
+/* boton recargar */
+
+.buttonload {
+    background-color: var(--gris);
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 30%;
+    transition: 0.5s;
+}
+
+.buttonload:hover {
+    cursor: pointer;
+    background-color: var(--verde);
+}
+
+.buttonload img {
+    width: 2rem;
+    height: 2rem;
 }
