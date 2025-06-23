@@ -3,6 +3,8 @@ import Login from "./routes/Login";
 // import Register from "./routes/Register";
 import Home from "./routes/Home";
 import Layout from "./components/Layout";
+import Recommendations from "./routes/Recommendations";
+import NotFound from "./routes/404";
 
 export default function App() {
   return (
@@ -13,6 +15,10 @@ export default function App() {
 
         <Route element={<Layout />}>
           <Route path="home" element={<Home />} />
+
+          <Route path="recommendations" element={<Recommendations />} />
+
+          <Route path="*" element={<NotFound />} />
 
         </Route>
       </Routes>

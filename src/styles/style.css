@@ -11,28 +11,33 @@
 }
 
 html, body {
-    background-color: #E4FAD8;
+    background-color: #0A0F19;
     font-family: "PT Sans", sans-serif;
-<<<<<<< HEAD:src/styles/style.css
-    color: #333;
-    
-=======
-    color: var(--gris);
->>>>>>> 4294883b93d8ff6e7e84b8d5c266f029c82ddbdc:src/assets/style.css
+    color: #fff;
 }
 
 .contenedor {
-    display: flex;
+    display: flex; /* muestra los elementos en una fila */
     justify-content: space-between; /* separa los elementos */
     align-items: center; /* alínea verticalmente */
-    padding: .5rem;
+    padding: 1rem;
 }
 
 @media (max-width: 768px) { /* si el ancho de la pantalla es menor a 768px (para celulares)*/
-    .contenedor {
+    .contenedor, .contenedor-1{
         flex-direction: column;
+        display: block; /* muestra los elementos en una columna */
         align-items: center;
     }
+}
+
+.contenedor-1 {
+    padding: 4rem 2rem; /* top-bottom, left-right */
+    background-color: #151a24;
+}
+
+.contenedor-1 p {
+    margin-top: 2rem;
 }
 
 .nav {
@@ -43,7 +48,6 @@ html, body {
 }
 
 .nav a {
-    color: var(--gris);
     text-decoration: none;
     padding: 0.5rem 1rem;
     transition: background-color 0.3s, color 0.3s;
