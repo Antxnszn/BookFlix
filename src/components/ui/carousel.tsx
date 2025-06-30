@@ -1,14 +1,14 @@
-import React, { useState, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Star, Clock, BookOpen } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { Star, X } from "lucide-react";
 
-interface Book {
+export interface Book {
   id: number;
   title: string;
   author: string;
   cover: string;
-  // rating: number;
-  genre: string;
+  genre: string[];
   description: string;
+  rating: number;
 }
 
 interface BookCarouselProps {
@@ -18,143 +18,152 @@ interface BookCarouselProps {
 
 const BookCarousel: React.FC<BookCarouselProps> = ({ title, books }) => {
   const [hoveredBook, setHoveredBook] = useState<number | null>(null);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = 320; // Ancho de cada libro + gap
-      const currentScroll = scrollRef.current.scrollLeft;
-      const targetScroll = direction === 'left' 
-        ? currentScroll - scrollAmount 
-        : currentScroll + scrollAmount;
-      
-      scrollRef.current.scrollTo({
-        left: targetScroll,
-        behavior: 'smooth'
-      });
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
+
+    fetch(`http://localhost:5000/api/favorites/${userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.favoriteIds) {
+          setFavoriteIds(data.favoriteIds);
+        }
+      })
+      .catch((err) => console.error("Error al cargar favoritos:", err));
+  }, []);
+
+  const toggleFavorite = (bookId: number) => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      alert("Por favor inicia sesión para agregar favoritos.");
+      return;
     }
+
+    fetch("http://localhost:5000/api/favorites/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: Number(userId), bookId }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setFavoriteIds((prev) =>
+            prev.includes(bookId)
+              ? prev.filter((id) => id !== bookId)
+              : [...prev, bookId]
+          );
+        } else {
+          console.error("Error actualizando favoritos:", data.error);
+        }
+      })
+      .catch((err) => console.error("Error al actualizar favoritos:", err));
   };
 
   return (
-    <div className="relative mb-12 group">
-      {/* Título de la sección */}
-      <h2 className="text-2xl font-bold text-[#FBFDFA] mb-6">
-        {title}
-      </h2>
+    <div className="relative">
+      <h2 className="text-2xl ml-10 font-bold text-[#FBFDFA] mb-6">{title}</h2>
 
-      {/* Contenedor del carrusel */}
-      <div className="relative ">
-        {/* Botón izquierdo */}
-        <button
-          onClick={() => scroll('left')}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hover:bg- text-[#FBFDFA] p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-4 md:ml-12"
-          aria-label="Scroll left"
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-
-        {/* Botón derecho */}
-        <button
-          onClick={() => scroll('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#FFFFFF] hover:bg-black text-[#FBFDFA] p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 mr-4 md:mr-12"
-          aria-label="Scroll right"
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
-
-        {/* Contenedor de libros con scroll */}
+      <div className="relative group">
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          className="flex gap-4 overflow-x-auto pb-4"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {books.map((book) => (
-            <div
-              key={book.id}
-              className="relative flex-shrink-0 w-72"
-              onMouseEnter={() => setHoveredBook(book.id)}
-              onMouseLeave={() => setHoveredBook(null)}
-            >
-              {/* Tarjeta del libro */}
-              <div className={`
-                relative bg-none rounded-lg overflow-hidden cursor-pointer
-                transition-all duration-300 ease-out
-                ${hoveredBook === book.id 
-                  ? 'scale-105 shadow-2xl shadow-black/50 z-20' 
-                  : 'hover:scale-102'
-                }
-              `}>
-                {/* Imagen de portada */}
-                <div className="relative aspect-[3/4] overflow-hidden">
-                  <img
-                    src={book.cover}
-                    alt={book.title}
-                    className="w-full h-full object-cover transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                </div>
+          {books.map((book) => {
+            const isFavorite = favoriteIds.includes(book.id);
 
-                {/* Información básica siempre visible */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-[#FBFDFA]">
-                  <h3 className="font-bold text-lg mb-1 line-clamp-2">
-                    {book.title}
-                  </h3>
-                  <p className="text-gray-300 text-sm">
-                    {book.author}
-                  </p>
-                </div>
+            return (
+              <div
+                key={book.id}
+                className="relative flex-shrink-0 w-32"
+                onMouseEnter={() => setHoveredBook(book.id)}
+                onMouseLeave={() => setHoveredBook(null)}
+              >
+                <div
+                  className={`relative bg-none rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-out ${
+                    hoveredBook === book.id
+                      ? "scale-105 shadow-2xl shadow-black/50 z-20"
+                      : "hover:scale-102"
+                  }`}
+                >
+                  <div className="relative aspect-[5/8] overflow-hidden">
+                    <img
+                      src={book.cover}
+                      alt={book.title}
+                      className="w-full h-full object-cover transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#000810] to-transparent" />
+                  </div>
 
-                {/* Información expandida en hover */}
-                {hoveredBook === book.id && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex flex-col justify-end">
-                    <div className="space-y-3">
-                      <div>
-                        <h3 className="font-bold text-xl mb-2 text-[#FBFDFA]">
-                          {book.title}
-                        </h3>
-                        <p className="text-gray-300 text-sm mb-2">
-                          por {book.author}
-                        </p>
-                      </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-[#E0F1FA]">
+                    <h3 className="font-bold text-lg mb-1 line-clamp-2">{book.title}</h3>
+                    <p className="text-[#E0F1FA] text-sm">{book.author}</p>
+                  </div>
 
-                      {/* Rating y metadatos */}
-                      <div className="flex items-center gap-4 text-sm">
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-[#FBFDFA] font-medium">
-                            {book.rating}
-                          </span>
+                  {hoveredBook === book.id && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex flex-col justify-end">
+                      <div className="space-y-3">
+                        <div className="flex gap-2 pt-2">
+                          <button
+                            className="flex-1 bg-[#D1E3F7] text-black font-semibold py-1 px-1 rounded hover:bg-[#93BBE5] transition-colors"
+                            onClick={() => setSelectedBook(book)}
+                          >
+                            Ver sinopsis
+                          </button>
+
+                          {/* Botón para agregar/quitar favorito */}
+                          <button
+                            onClick={() => toggleFavorite(book.id)}
+                            aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
+                            className={`p-2 rounded-full transition-colors ${
+                              isFavorite ? "bg-[#93BBE5] text-black" : "bg-[#354A55] text-white"
+                            }`}
+                          >
+                            <Star
+                              className="w-5 h-5"
+                              fill={isFavorite ? "yellow" : "none"}
+                              stroke={isFavorite ? "black" : "white"}
+                            />
+                          </button>
                         </div>
-                        <div className="flex items-center gap-1 text-gray-300">
-                          <BookOpen className="w-4 h-4" />
-                          <span>{book.genre}</span>
-                        </div>
-                      </div>
-
-                      {/* Descripción */}
-                      <p className="text-gray-200 text-sm line-clamp-3 leading-relaxed">
-                        {book.description}
-                      </p>
-
-                      {/* Botones de acción */}
-                      <div className="flex gap-2 pt-2">
-                        <button className="flex-1 bg-white text-black font-semibold py-2 px-4 rounded hover:bg-gray-200 transition-colors">
-                          Leer ahora
-                        </button>
-                        <button className="bg-gray-700 hover:bg-gray-600 text-[#FBFDFA] p-2 rounded transition-colors">
-                          <BookOpen className="w-5 h-5" />
-                        </button>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* <style>{`
+      {/* MODAL DE SINOPSIS */}
+      {selectedBook && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-[#000810] w-full max-w-lg p-6 rounded-lg shadow-lg relative mx-4">
+            <button
+              className="absolute top-4 right-4 text-[#D1E3F7] hover:text-[#6F9CCA]"
+              onClick={() => setSelectedBook(null)}
+              aria-label="Cerrar sinopsis"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <h3 className="text-xl text-[#E0F1FA] font-bold mb-2">{selectedBook.title}</h3>
+            <p className="text-[#9FB8C5] text-sm mb-1">por {selectedBook.author}</p>
+            <div className="flex items-center gap-2 mb-4">
+              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+              <span className="text-[#9FB8C5] font-medium">{selectedBook.rating.toFixed(2)}</span>
+              <span className="text-[#687F8B]">· {selectedBook.genre.join(", ")}</span>
+            </div>
+            <p className="text-[#E0F1FA] whitespace-pre-line">{selectedBook.description}</p>
+          </div>
+        </div>
+      )}
+
+      <style>{`
         .scrollbar-hide {
           -ms-overflow-style: none;
           scrollbar-width: none;
@@ -168,99 +177,9 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ title, books }) => {
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
-        .line-clamp-3 {
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style> */}
+      `}</style>
     </div>
   );
 };
 
-// Datos de ejemplo
-const sampleBooks: Book[] = [
-  {
-    id: 1,
-    title: "El Nombre del Viento",
-    author: "Patrick Rothfuss",
-    cover: "",
-    rating: 4.8,
-    genre: "Fantasía",
-    readTime: "15h 30min",
-    description: "Una épica historia de magia, música y misterio que sigue las aventuras de Kvothe, un joven con un destino extraordinario."
-  },
-  {
-    id: 2,
-    title: "1984",
-    author: "George Orwell",
-    cover: "",
-    rating: 4.9,
-    genre: "Distopía",
-    readTime: "8h 45min",
-    description: "Una visionaria novela sobre un futuro totalitario donde la libertad de pensamiento es el último refugio de la humanidad."
-  },
-  {
-    id: 3,
-    title: "Cien Años de Soledad",
-    author: "Gabriel García Márquez",
-    cover: "",
-    rating: 4.7,
-    genre: "Realismo Mágico",
-    readTime: "12h 15min",
-    description: "La saga multigeneracional de la familia Buendía en el mítico pueblo de Macondo, una obra maestra del realismo mágico."
-  },
-  {
-    id: 4,
-    title: "El Alquimista",
-    author: "Paulo Coelho",
-    cover: "",
-    rating: 4.6,
-    genre: "Filosofía",
-    readTime: "4h 30min",
-    description: "La inspiradora historia de Santiago, un joven pastor que emprende un viaje para descubrir su leyenda personal."
-  },
-  {
-    id: 5,
-    title: "Dune",
-    author: "Frank Herbert",
-    cover: "",
-    rating: 4.5,
-    genre: "Ciencia Ficción",
-    readTime: "22h 10min",
-    description: "Una épica espacial ambientada en el desértico planeta Arrakis, donde el control de la especia determina el destino del universo."
-  },
-  {
-    id: 6,
-    title: "Orgullo y Prejuicio",
-    author: "Jane Austen",
-    cover: "",
-    rating: 4.4,
-    genre: "Romance Clásico",
-    readTime: "11h 20min",  
-    description: "Una ingeniosa comedia de modales que explora temas de amor, reputación y clase social en la Inglaterra del siglo XIX."
-  }
-];
-
-// Componente principal de demostración
-export default function App() {
-  return (
-    <div className="">
-      <div className="pt-8">
-        <BookCarousel 
-          title="Recomendados para ti" 
-          books={sampleBooks} 
-        />
-        <BookCarousel 
-          title="Más populares" 
-          books={sampleBooks.slice().reverse()} 
-        />
-        <BookCarousel 
-          title="Nuevos lanzamientos" 
-          books={sampleBooks.slice(2)} 
-        />
-      </div>
-    </div>
-  );
-}
+export default BookCarousel;

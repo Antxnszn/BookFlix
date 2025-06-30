@@ -3,22 +3,37 @@ import '../styles/style.css';
 
 function NavBar() {
   return (
-    <section>
-      <div className="contenedor">
+    
+      <div className="bg-[#04070B] flex flex-row justify-between items-center p-4 px-[10em]">
         <div>
-          <h1 className="font-bold">Bookflix</h1>
+          <h1 className="font-bold text-2xl text-[#C2E8FEC9]">Bookflix</h1>
         </div>
-        <div>
-          <nav className="nav">
-            <Link to="/home">Home</Link>
-            <Link to="/recommendations">Recommendations</Link>
-            <Link to="/features">Features</Link>
-            <Link to="/about">About</Link>
-            <Link to="/contact">Contact</Link>
+
+          <nav className="flex  font-bold flex-row gap-4 text-[#E7EFF5]">
+
+            <div className="hover:text-[#87BBDA]">
+              <Link to="/home">Home</Link>
+            </div>
+
+            <div className="hover:text-[#87BBDA]">
+              <Link to="/recommendations">Recommendations</Link>
+            </div>
+{/* 
+            <div className="hover:text-[#87BBDA]">
+              <Link to="/features">Features</Link>
+            </div>
+
+            <div className="hover:text-[#87BBDA]">
+              <Link to="/about">About</Link>
+            </div> */}
+
+            <div className="hover:text-[#87BBDA]">
+              <Link to="/">Cerrar sesión</Link>
+            </div>
+
           </nav>
-        </div>
       </div>
-    </section>
+  
   );
 }
 
