@@ -79,7 +79,7 @@ localStorage.setItem("userId", data.user_id.toString());
         ¿No tienes cuenta?{" "}
         <button
           onClick={() => navigate("/register")}
-          className="text-[#1E3348] hover:text-[#7AA7D6] underline"
+          className="text-[#283F58] hover:text-[#687F8B] font-semibold underline"
         >
           Regístrate
         </button>
