@@ -19,4 +19,7 @@ Clonado el repositorio, necesitamos instalar las dependencias necesarias, para e
 npm install
 ```
 
-Una vez teniendo esto, podremos visualizar la aplicación localmente.
+Una vez teniendo esto, podremos visualizar la aplicación localmente con el siguiente comando:
+```bash
+npm run dev
+```
